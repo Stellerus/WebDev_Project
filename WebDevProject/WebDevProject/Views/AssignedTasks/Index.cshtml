@@ -1,0 +1,107 @@
+﻿@model IEnumerable<WebDevProject.Models.TodoTask>
+
+@{
+    ViewData["Title"] = "My Assigned Tasks";
+    var statusFilter = ViewData["StatusFilter"] as string ?? "active";
+    var sortBy = ViewData["SortBy"] as string ?? "duedate";
+}
+
+<h2>My Assigned Tasks</h2>
+
+// Filter
+<div>
+    <strong>Filter by status:</strong>
+    <a asp-action="Index"
+       asp-route-statusFilter="active"
+       asp-route-sortBy="@sortBy"
+       style="@(statusFilter == "active" ? "font-weight:bold;" : "")">
+        Active
+    </a> |
+    <a asp-action="Index"
+       asp-route-statusFilter="completed"
+       asp-route-sortBy="@sortBy"
+       style="@(statusFilter == "completed" ? "font-weight:bold;" : "")">
+        Completed
+    </a> |
+    <a asp-action="Index"
+       asp-route-statusFilter="all"
+       asp-route-sortBy="@sortBy"
+       style="@(statusFilter == "all" ? "font-weight:bold;" : "")">
+        All
+    </a>
+</div>
+
+// Sort tasks
+<div>
+    <strong>Sort by:</strong>
+    <a asp-action="Index"
+       asp-route-statusFilter="@statusFilter"
+       asp-route-sortBy="duedate"
+       style="@(sortBy == "duedate" ? "font-weight:bold;" : "")">
+        Due Date
+    </a> |
+    <a asp-action="Index"
+       asp-route-statusFilter="@statusFilter"
+       asp-route-sortBy="title"
+       style="@(sortBy == "title" ? "font-weight:bold;" : "")">
+        Title
+    </a> |
+    <a asp-action="Index"
+       asp-route-statusFilter="@statusFilter"
+       asp-route-sortBy="createddate"
+       style="@(sortBy == "createddate" ? "font-weight:bold;" : "")">
+        Created Date
+    </a>
+</div>
+
+<br />
+
+@if (Model.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Todo List</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="@(item.IsOverdue ? "background-color: #ffebee;" : "")">
+                    <td>@item.Title</td>
+                    <td>@item.DueDate.ToString("MMM dd, yyyy")</td>
+                    <td>
+                        "@* change status from list *@"
+                        <form asp-action="UpdateStatus" method="post" style="display:inline;">
+                            <input type="hidden" name="taskId" value="@item.Id" />
+                            <select name="newStatus" onchange="this.form.submit()">
+                                <option value="Not Started" selected="@(item.Status == "Not Started")">
+                                    Not Started
+                                </option>
+                                <option value="In Progress" selected="@(item.Status == "In Progress")">
+                                    In Progress
+                                </option>
+                                <option value="Completed" selected="@(item.Status == "Completed")">
+                                    Completed
+                                </option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>@item.TodoList.Title</td>
+                    <td>
+                        <a asp-controller="Tasks" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-controller="Tasks" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No assigned tasks found.</p>
+}

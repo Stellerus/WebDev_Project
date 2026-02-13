@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/css/app.css" />
+</head>
+<body>
+    <menu>
+        <menu>
+            <a asp-controller="Home" asp-action="Index">Home</a>
+            <a asp-controller="TodoLists" asp-action="Index">My Todo Lists</a>
+            <a asp-controller="AssignedTasks" asp-action="Index">My Assigned Tasks</a>
+            <a asp-controller="Search" asp-action="Index">Search</a>
+            <a asp-controller="Tags" asp-action="Index">Tags</a>
+            <partial name="_LoginPartial" />
+        </menu>
+    </menu>
+
+    <p>
+        @RenderSection("SubHeader", false)
+    </p>
+
+    <div>
+        @RenderBody()
+    </div>
+
+    @RenderSection("Scripts", false)
+</body>
+</html>

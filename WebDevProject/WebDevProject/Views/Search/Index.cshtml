@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Search Tasks";
+}
+
+<h2>Search Tasks</h2>
+
+<form asp-action="Index" method="post">
+    <div>
+        <label for="searchText">Search Text:</label>
+        <input type="text" id="searchText" name="searchText" required />
+    </div>
+
+    <div style="margin-top: 10px;">
+        <input type="submit" value="Search" />
+    </div>
+</form>

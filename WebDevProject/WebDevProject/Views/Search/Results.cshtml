@@ -1,0 +1,40 @@
+﻿@model IEnumerable<WebDevProject.Models.TodoTask>
+@{
+    ViewData["Title"] = $"Search Results: {ViewBag.SearchText}";
+}
+
+<h2>Search Results</h2>
+<p>Search for: "@ViewBag.SearchText"</p>
+
+@if (Model.Any())
+{
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Todo List</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var task in Model)
+            {
+                        <tr style="@(task.IsOverdue ? "background-color: #ffebee;" : "")">
+                            <td>@task.Title</td>
+                            <td>@task.Description</td>
+                            <td>@task.DueDate.ToString("MMM dd, yyyy")</td>
+                            <td>@task.Status</td>
+                            <td>@task.TodoList.Title</td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+else
+{
+        <p>No tasks found matching your search.</p>
+}
+
+<a asp-action="Index">New Search</a>

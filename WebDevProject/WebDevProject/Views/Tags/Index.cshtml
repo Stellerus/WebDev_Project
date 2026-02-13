@@ -1,0 +1,41 @@
+﻿@model List<WebDevProject.Models.Tag>
+@{
+    ViewData["Title"] = "My Tags";
+}
+
+<h2>My Tags</h2>
+
+<p>
+    <a asp-action="Create">Create New Tag</a>
+</p>
+
+@if (Model.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Tag Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tag in Model)
+            {
+                <tr>
+                    <td>@tag.Name</td>
+                    <td>
+                        <a asp-action="TasksByTag" asp-route-id="@tag.Id">View Tasks</a> |
+                        <form asp-action="Delete" method="post" style="display:inline;" onsubmit="return confirm('Delete this tag?')">
+                            <input type="hidden" name="id" value="@tag.Id" />
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No tags found. <a asp-action="Create">Create your first tag</a></p>
+}

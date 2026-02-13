@@ -1,0 +1,59 @@
+﻿@model IEnumerable<WebDevProject.Models.TodoTask>
+
+@{
+    var todoList = ViewData["TodoList"] as WebDevProject.Models.TodoList;
+    ViewData["Title"] = $"Tasks - {todoList?.Title}";
+}
+
+<h2>Tasks in: @todoList?.Title</h2>
+
+<p>
+    <a asp-action="Create" asp-route-listId="@todoList?.Id">Create New Task</a> |
+    <a asp-controller="TodoLists" asp-action="Index">Back to Lists</a>
+</p>
+
+@if (Model.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="@(item.IsOverdue ? "background-color:#ffebee;" : "")">
+                    <td>@item.Title</td>
+                    <td>@item.DueDate.ToString("MMM dd, yyyy")</td>
+                    <td>@item.Status</td>
+
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+
+                        <form asp-action="Delete"
+                              method="post"
+                              style="display:inline;"
+                              onsubmit="return confirm('Are you sure you want to delete this task?')">
+
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>
+        No tasks found.
+        <a asp-action="Create" asp-route-listId="@todoList?.Id">Create your first task!</a>
+    </p>
+}

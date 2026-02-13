@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@section SubHeader {
+    <h1>Todo List Application</h1>
+}
+
+<div>
+    <p>Welcome to Todo List Application!</p>
+    <p>
+        <a asp-controller="TodoLists" asp-action="Index">View My Todo Lists</a> to get started.
+    </p>
+    <p>
+        <a asp-controller="AssignedTasks" asp-action="Index">View My Assigned Tasks</a> to see tasks assigned to you.
+    </p>
+</div>

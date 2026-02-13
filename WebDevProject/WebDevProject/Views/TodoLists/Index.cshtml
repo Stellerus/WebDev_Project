@@ -1,0 +1,66 @@
+﻿@model IEnumerable<WebDevProject.Models.TodoList>
+
+@{
+    ViewData["Title"] = "My Todo Lists";
+}
+
+<h2>My Todo Lists</h2>
+
+<p>
+    <a asp-action="Create">Create New List</a>
+</p>
+
+@if (Model.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Tasks Count</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>@item.Tasks.Count</td>
+
+                    <td>
+                        <a asp-controller="Tasks" asp-action="Index" asp-route-listId="@item.Id">View Tasks</a> |
+                        <a asp-controller="Tasks" asp-action="Create" asp-route-listId="@item.Id">Add Task</a> |
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+
+                        <form asp-action="Delete"
+                              method="post"
+                              style="display:inline;"
+                              onsubmit="return confirmDelete()">
+
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>
+        No todo lists found.
+        <a asp-action="Create">Create your first todo list!</a>
+    </p>
+}
+
+@section Scripts {
+    <script>
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete this todo list?");
+        }
+    </script>
+}

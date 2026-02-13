@@ -1,0 +1,87 @@
+﻿@model WebDevProject.Models.TodoTask
+@{
+    ViewData["Title"] = "Create Task";
+    var allTags = ViewBag.AllTags as List<WebDevProject.Models.Tag> ?? new List<WebDevProject.Models.Tag>();
+}
+
+<h2>Create New Task</h2>
+
+<form asp-action="Create">
+    <input type="hidden" asp-for="TodoListId" />
+    <input type="hidden" asp-for="AssignedUserId" />
+
+    <div>
+        <label asp-for="Title"></label>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+
+    <div>
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description"></textarea>
+        <span asp-validation-for="Description"></span>
+    </div>
+
+    <div>
+        <label asp-for="DueDate"></label>
+        <input asp-for="DueDate" type="datetime-local"
+               value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm")" />
+        <span asp-validation-for="DueDate"></span>
+    </div>
+
+    <div>
+        <label asp-for="Status"></label>
+        <select asp-for="Status">
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+        </select>
+        <span asp-validation-for="Status"></span>
+    </div>
+
+    @if (allTags.Any())
+    {
+        <div>
+            <label>Tags:</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
+                @foreach (var tag in allTags)
+                {
+                    <div style="display: inline-block;">
+                        <input type="checkbox"
+                               style="display: none;"
+                               id="tag-@tag.Id"
+                               name="SelectedTagIds"
+                               value="@tag.Id" />
+                        <label for="tag-@tag.Id"
+                               style="display: inline-block; background: #f0f0f0; color: #333; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">
+                            @tag.Name
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div>
+        <input type="submit" value="Create" />
+        <a asp-action="Index" asp-route-listId="@Model.TodoListId">Cancel</a>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var labels = document.querySelectorAll('label[for^="tag-"]');
+        labels.forEach(function(label) {
+            label.addEventListener('click', function() {
+                var checkbox = document.getElementById(this.getAttribute('for'));
+                if (checkbox.checked) {
+                    this.style.background = '#f0f0f0';
+                    this.style.color = '#333';
+                } else {
+                    this.style.background = '#007bff';
+                    this.style.color = 'white';
+                }
+            });
+        });
+    });
+</script>

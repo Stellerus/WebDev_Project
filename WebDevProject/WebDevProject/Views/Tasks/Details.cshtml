@@ -1,0 +1,143 @@
+﻿@model WebDevProject.Models.TodoTask
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject WebDevProject.Services.ICommentService CommentService
+
+@{
+    ViewData["Title"] = "Task Details";
+    var userId = UserManager.GetUserId(User);
+    var comments = await CommentService.GetTaskCommentsAsync(Model.Id, userId);
+}
+
+<h2>Task Details</h2>
+
+<div>
+    <h4>@Model.Title</h4>
+    <hr />
+
+    <dl>
+        <dt>Description</dt>
+        <dd>@Model.Description</dd>
+
+        <dt>Due Date</dt>
+        <dd>@Model.DueDate.ToString("MMM dd, yyyy")</dd>
+
+        <dt>Status</dt>
+        <dd>@Model.Status</dd>
+
+        <dt>Created Date</dt>
+        <dd>@Model.CreatedDate.ToString("MMM dd, yyyy")</dd>
+
+        <dt>Todo List</dt>
+        <dd>@Model.TodoList.Title</dd>
+
+        <dt>Tags</dt>
+        <dd>
+            @if (Model.Tags != null && Model.Tags.Any())
+            {
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <span style="
+                                    background:#e8e8e8;
+                                    padding:4px 10px;
+                                    border-radius:4px;
+                                    color:#333;
+                                ">
+                            @tag.Name
+                        </span>
+                    }
+                </div>
+            }
+            else
+            {
+                <span>No tags</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+@* Comments *@
+<div style="margin-top: 25px;">
+    <h5>Comments (@comments.Count)</h5>
+
+    @* Add Comment *@
+    <form asp-controller="Comments" asp-action="Create" method="post">
+        <input type="hidden" name="taskId" value="@Model.Id" />
+
+        <textarea name="content"
+                  placeholder="Add a comment..."
+                  style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;">
+        </textarea>
+
+        <div>
+            <input type="submit" value="Add Comment" />
+        </div>
+    </form>
+
+    @* List of Comments *@
+    @if (comments.Any())
+    {
+        <div style="margin-top:20px;">
+            @foreach (var comment in comments)
+            {
+                <div style="
+                            border:1px solid #ddd;
+                            padding:12px;
+                            margin-bottom:12px;
+                            border-radius:6px;
+                            background:#fafafa;
+                        ">
+
+                    <div style="font-size:12px; color:#666;">
+                        @comment.CreatedDate.ToString("MMM dd, yyyy HH:mm")
+
+                        @if (comment.ModifiedDate.HasValue)
+                        {
+                            <span>(edited @comment.ModifiedDate.Value.ToString("MMM dd, HH:mm"))</span>
+                        }
+                    </div>
+
+                    <div style="margin:6px 0; font-size:14px;">
+                        @comment.Content
+                    </div>
+
+                    @if (comment.UserId == userId)
+                    {
+                        <div style="font-size:12px; margin-top:8px;">
+
+                            @* Edit from *@
+                            <form asp-controller="Comments" asp-action="Edit" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@comment.Id" />
+                                <textarea name="content"
+                              style="width:100%; padding:6px; margin:6px 0; border:1px solid #ccc; border-radius:4px;"
+                              placeholder="Edit comment...">@comment.Content</textarea>
+                                <button type="submit" style="padding:3px 10px;">Save</button>
+                            </form>
+
+                            @* Delete from *@
+                            <form asp-controller="Comments" asp-action="Delete" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@comment.Id" />
+                                <button type="submit"
+                                        style="padding:3px 10px; background:#d9534f; color:white; border:none; border-radius:3px;"
+                                        onclick="return confirm('Delete this comment?')">
+                                    Delete
+                                </button>
+                            </form>
+
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No comments yet.</p>
+    }
+</div>
+
+<div style="margin-top:20px;">
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit Task</a> |
+    <a asp-action="Index" asp-route-listId="@Model.TodoListId">Back to Tasks</a>
+</div>
